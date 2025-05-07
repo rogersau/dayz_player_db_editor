@@ -34,6 +34,9 @@
             label2 = new Label();
             searchPlayerButton = new Button();
             groupBox1 = new GroupBox();
+            searchItemTextBox = new TextBox();
+            searchItemButton = new Button();
+            label9 = new Label();
             countItemsButton = new Button();
             clearDuplicatesListButton = new Button();
             searchDuplicatesButton = new Button();
@@ -60,9 +63,6 @@
             label6 = new Label();
             label5 = new Label();
             playerCounter = new Label();
-            searchItemTextBox = new TextBox();
-            searchItemButton = new Button();
-            label9 = new Label();
             groupBox1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -129,6 +129,34 @@
             groupBox1.Size = new Size(1160, 828);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
+            // 
+            // searchItemTextBox
+            // 
+            searchItemTextBox.Location = new Point(593, 680);
+            searchItemTextBox.Margin = new Padding(3, 4, 3, 4);
+            searchItemTextBox.Name = "searchItemTextBox";
+            searchItemTextBox.Size = new Size(394, 27);
+            searchItemTextBox.TabIndex = 16;
+            // 
+            // searchItemButton
+            // 
+            searchItemButton.Location = new Point(993, 678);
+            searchItemButton.Margin = new Padding(3, 4, 3, 4);
+            searchItemButton.Name = "searchItemButton";
+            searchItemButton.Size = new Size(158, 31);
+            searchItemButton.TabIndex = 17;
+            searchItemButton.Text = "Search Item";
+            searchItemButton.UseVisualStyleBackColor = true;
+            searchItemButton.Click += Click_Button_Action;
+            // 
+            // label9
+            // 
+            label9.Location = new Point(593, 650);
+            label9.Name = "label9";
+            label9.Size = new Size(560, 24);
+            label9.TabIndex = 18;
+            label9.Text = "Search for Item:";
+            label9.TextAlign = ContentAlignment.TopCenter;
             // 
             // countItemsButton
             // 
@@ -235,7 +263,7 @@
             dupeInventory.Location = new Point(593, 51);
             dupeInventory.Margin = new Padding(3, 4, 3, 4);
             dupeInventory.Name = "dupeInventory";
-            dupeInventory.Size = new Size(559, 655);
+            dupeInventory.Size = new Size(559, 595);
             dupeInventory.TabIndex = 1;
             dupeInventory.NodeMouseClick += NodeMouseClick;
             // 
@@ -245,37 +273,9 @@
             playerInventory.Location = new Point(7, 51);
             playerInventory.Margin = new Padding(3, 4, 3, 4);
             playerInventory.Name = "playerInventory";
-            playerInventory.Size = new Size(559, 655);
+            playerInventory.Size = new Size(559, 595);
             playerInventory.TabIndex = 0;
             playerInventory.NodeMouseClick += NodeMouseClick;
-            // 
-            // searchItemTextBox
-            // 
-            searchItemTextBox.Location = new Point(593, 637);
-            searchItemTextBox.Margin = new Padding(3, 4, 3, 4);
-            searchItemTextBox.Name = "searchItemTextBox";
-            searchItemTextBox.Size = new Size(394, 27);
-            searchItemTextBox.TabIndex = 16;
-            // 
-            // searchItemButton
-            // 
-            searchItemButton.Location = new Point(995, 637);
-            searchItemButton.Margin = new Padding(3, 4, 3, 4);
-            searchItemButton.Name = "searchItemButton";
-            searchItemButton.Size = new Size(158, 31);
-            searchItemButton.TabIndex = 17;
-            searchItemButton.Text = "Search Item";
-            searchItemButton.UseVisualStyleBackColor = true;
-            searchItemButton.Click += Click_Button_Action;
-            // 
-            // label9
-            // 
-            label9.Location = new Point(593, 609);
-            label9.Name = "label9";
-            label9.Size = new Size(560, 24);
-            label9.TabIndex = 18;
-            label9.Text = "Search for Item:";
-            label9.TextAlign = ContentAlignment.TopCenter;
             // 
             // contextMenuStrip1
             // 
