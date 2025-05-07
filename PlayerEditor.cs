@@ -10,7 +10,7 @@ public partial class PlayerEditor : UserControl
     public void LoadPlayerDB(string path)
     {
         DB = new DzPlayersDb(path);
-        playerCounter.Text = $"Записей: {DB.Players.Count}";
+        playerCounter.Text = $"Records: {DB.Players.Count}";
         LoadPlayersList();
     }
     public void ReloadDB(string path)
@@ -24,7 +24,7 @@ public partial class PlayerEditor : UserControl
 
     private void ResetControls()
     {
-        playerCounter.Text = "Записей: 0";
+        playerCounter.Text = "Records: 0";
 
         playersListBox.Items.Clear();
         playerInventory.Nodes.Clear();
@@ -33,17 +33,23 @@ public partial class PlayerEditor : UserControl
         playerDbId.Clear();
         playerUID.Clear();
         playerChartype.Clear();
-        playerStatus.Text = "Отсутствует";
+        playerStatus.Text = "Missing";
     }
     private void LoadPlayersList()
     {
         playersListBox.BeginUpdate();
 
-        foreach (var player in DB.Players)
-            playersListBox.Items.Add(player);
-
-        playersListBox.DisplayMember = "UID";
-        playersListBox.SelectedIndex = 0;
+        if (DB != null)
+        {
+            foreach (var player in DB.Players)
+                playersListBox.Items.Add(player);
+            
+            playersListBox.DisplayMember = "UID";
+            
+            if (playersListBox.Items.Count > 0)
+                playersListBox.SelectedIndex = 0;
+        }
+        
         playersListBox.EndUpdate();
     }
 
@@ -57,7 +63,10 @@ public partial class PlayerEditor : UserControl
             SearchDuplicates();
         else if (sender == clearDuplicatesListButton)
             dupeInventory.Nodes.Clear();
-
+        else if (sender == countItemsButton)
+            CountPlayerItems();
+        else if (sender == searchItemButton)
+            SearchItemAcrossPlayers();
     }
     private void FindNextPlayer()
     {
@@ -84,15 +93,18 @@ public partial class PlayerEditor : UserControl
         var playerNode = new TreeNode("Players");
         var itemsNode = new TreeNode("Items");
 
-        foreach (var player in DB.Players)
+        if (DB != null)
         {
-            if (player.Items == null || !player.Alive)
-                continue;
-            foreach (var item in player.Items)
+            foreach (var player in DB.Players)
             {
-                if (!allItemsList.ContainsKey(item.PersistentGuid))
-                    allItemsList.Add(item.PersistentGuid, new List<DzItem>());
-                allItemsList[item.PersistentGuid].Add(item);
+                if (player.Items == null || !player.Alive)
+                    continue;
+                foreach (var item in player.Items)
+                {
+                    if (!allItemsList.ContainsKey(item.PersistentGuid))
+                        allItemsList.Add(item.PersistentGuid, new List<DzItem>());
+                    allItemsList[item.PersistentGuid].Add(item);
+                }
             }
         }
 
@@ -230,5 +242,249 @@ public partial class PlayerEditor : UserControl
     {
         var node = (((TreeView)(((ContextMenuStrip)((ToolStripMenuItem)sender).Owner!)!).SourceControl!)!).SelectedNode;
         Clipboard.SetText(((string)node.Tag).Remove(0,5));
+    }
+
+    private void CountPlayerItems()
+    {
+        if (playersListBox.SelectedItem is not DzChar player || player.Items == null)
+        {
+            MessageBox.Show("No player selected or player has no items.", "Count Items", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        // Dictionary to store item counts by classname
+        var itemCounts = new Dictionary<string, int>();
+        int totalItems = 0;
+
+        // Recursive function to count all items including those in containers
+        void CountItemsRecursive(DzItem item)
+        {
+            // Count the item itself
+            if (itemCounts.ContainsKey(item.Classname))
+                itemCounts[item.Classname]++;
+            else
+                itemCounts[item.Classname] = 1;
+            
+            totalItems++;
+
+            // Count child items
+            if (item.Childs != null)
+            {
+                foreach (var childItem in item.Childs)
+                {
+                    CountItemsRecursive(childItem);
+                }
+            }
+        }
+
+        // Process all player's items
+        foreach (var item in player.Items)
+        {
+            CountItemsRecursive(item);
+        }
+
+        // Format the results to display
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Player: {player.CharacterName} (UID: {player.UID})");
+        sb.AppendLine($"Total items: {totalItems}");
+        sb.AppendLine();
+        sb.AppendLine("Item counts by name:");
+        sb.AppendLine("---------------------");
+
+        // Order items by count (descending)
+        foreach (var item in itemCounts.OrderByDescending(i => i.Value))
+        {
+            sb.AppendLine($"{item.Key}: {item.Value}");
+        }
+
+        // Display the results in a dialog
+        var resultsForm = new Form
+        {
+            Text = "Item Count Results",
+            Size = new Size(500, 600),
+            StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.Sizable,
+            MinimizeBox = false,
+            MaximizeBox = true
+        };
+
+        var textBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            Dock = DockStyle.Fill,
+            ScrollBars = ScrollBars.Both,
+            Text = sb.ToString(),
+            Font = new Font("Consolas", 10)
+        };
+
+        var closeButton = new Button
+        {
+            Text = "Close",
+            Dock = DockStyle.Bottom,
+            Height = 30
+        };
+        closeButton.Click += (s, e) => resultsForm.Close();
+
+        resultsForm.Controls.Add(textBox);
+        resultsForm.Controls.Add(closeButton);
+        resultsForm.Show();
+    }
+
+    private void SearchItemAcrossPlayers()
+    {
+        if (string.IsNullOrWhiteSpace(searchItemTextBox.Text) || DB == null)
+        {
+            MessageBox.Show("Please enter an item name to search for.", "Search Item", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        string searchTerm = searchItemTextBox.Text.Trim().ToLowerInvariant();
+        
+        // Dictionary to store player counts for the searched item
+        var playerItemCounts = new Dictionary<string, int>();
+        int totalItemsFound = 0;
+        int playersWithItem = 0;
+
+        // Recursive function to count matching items including those in containers
+        void CountItemsRecursive(DzItem item, string playerUID)
+        {
+            // Check if the item name contains the search term
+            if (item.Classname.ToLowerInvariant().Contains(searchTerm))
+            {
+                if (!playerItemCounts.ContainsKey(playerUID))
+                    playerItemCounts[playerUID] = 0;
+                
+                playerItemCounts[playerUID]++;
+                totalItemsFound++;
+            }
+
+            // Search in child items
+            if (item.Childs != null)
+            {
+                foreach (var childItem in item.Childs)
+                {
+                    CountItemsRecursive(childItem, playerUID);
+                }
+            }
+        }
+
+        // Process all players' items
+        foreach (var player in DB.Players)
+        {
+            if (player.Items == null || !player.Alive)
+                continue;
+            
+            foreach (var item in player.Items)
+            {
+                CountItemsRecursive(item, player.UID);
+            }
+            
+            // Track how many players have this item
+            if (playerItemCounts.ContainsKey(player.UID) && playerItemCounts[player.UID] > 0)
+                playersWithItem++;
+        }
+
+        // Format the results to display
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Search Results for: \"{searchItemTextBox.Text}\"");
+        sb.AppendLine($"Total items found: {totalItemsFound} in {playersWithItem} players");
+        sb.AppendLine();
+        sb.AppendLine("Item counts by player:");
+        sb.AppendLine("-----------------------");
+
+        // Show players with the item, ordered by count (descending)
+        foreach (var playerCount in playerItemCounts.OrderByDescending(p => p.Value))
+        {
+            // Find player name for this UID
+            string playerName = "Unknown";
+            foreach (var player in DB.Players)
+            {
+                if (player.UID == playerCount.Key)
+                {
+                    playerName = player.CharacterName;
+                    break;
+                }
+            }
+            
+            sb.AppendLine($"{playerName} (UID: {playerCount.Key}): {playerCount.Value}");
+        }
+
+        // If no results, show message
+        if (totalItemsFound == 0)
+        {
+            sb.AppendLine("No matching items found.");
+        }
+
+        // Display the results in a dialog
+        var resultsForm = new Form
+        {
+            Text = "Item Search Results",
+            Size = new Size(600, 600),
+            StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.Sizable,
+            MinimizeBox = false,
+            MaximizeBox = true
+        };
+
+        var textBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            Dock = DockStyle.Fill,
+            ScrollBars = ScrollBars.Both,
+            Text = sb.ToString(),
+            Font = new Font("Consolas", 10)
+        };
+
+        var closeButton = new Button
+        {
+            Text = "Close",
+            Dock = DockStyle.Bottom,
+            Height = 30
+        };
+        closeButton.Click += (s, e) => resultsForm.Close();
+
+        var selectPlayerButton = new Button
+        {
+            Text = "Select Player",
+            Dock = DockStyle.Bottom,
+            Height = 30,
+            Enabled = false
+        };
+        
+        // Use MouseUp and TextChanged instead of SelectionChanged
+        textBox.MouseUp += UpdateSelectButtonState;
+        textBox.TextChanged += UpdateSelectButtonState;
+        
+        // Helper method to update button state
+        void UpdateSelectButtonState(object? sender, EventArgs e)
+        {
+            // Look for a UID pattern in the selected text
+            string selectedText = textBox.SelectedText;
+            selectPlayerButton.Enabled = selectedText.Contains("UID:") && selectedText.Length > 5;
+        }
+
+        // Try to select the player when the button is clicked
+        selectPlayerButton.Click += (s, e) => {
+            string selectedText = textBox.SelectedText;
+            if (selectedText.Contains("UID:"))
+            {
+                int startIndex = selectedText.IndexOf("UID:") + 5;
+                int endIndex = selectedText.IndexOf(")", startIndex);
+                if (endIndex > startIndex)
+                {
+                    string uid = selectedText.Substring(startIndex, endIndex - startIndex).Trim();
+                    searchPlayer.Text = uid;
+                    FindNextPlayer();
+                    resultsForm.Close();
+                }
+            }
+        };
+
+        resultsForm.Controls.Add(textBox);
+        resultsForm.Controls.Add(selectPlayerButton);
+        resultsForm.Controls.Add(closeButton);
+        resultsForm.Show();
     }
 }

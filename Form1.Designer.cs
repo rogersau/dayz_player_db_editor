@@ -53,39 +53,39 @@
             fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, unloadToolStripMenuItem, reloadToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(48, 20);
-            fileToolStripMenuItem.Text = "Файл";
+            fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(253, 22);
-            openToolStripMenuItem.Text = "Открыть базу данных";
+            openToolStripMenuItem.Text = "Open Database";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.Size = new Size(253, 22);
-            saveToolStripMenuItem.Text = "Выгрузить правки в базу данных";
+            saveToolStripMenuItem.Text = "Export Changes to Database";
             // 
             // unloadToolStripMenuItem
             // 
             unloadToolStripMenuItem.Name = "unloadToolStripMenuItem";
             unloadToolStripMenuItem.Size = new Size(253, 22);
-            unloadToolStripMenuItem.Text = "Выгрузить базу из памяти";
+            unloadToolStripMenuItem.Text = "Unload Database from Memory";
             // 
             // reloadToolStripMenuItem
             // 
             reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
             reloadToolStripMenuItem.Size = new Size(253, 22);
-            reloadToolStripMenuItem.Text = "Перезагрузить базу данных";
+            reloadToolStripMenuItem.Text = "Reload Database";
             reloadToolStripMenuItem.Click += reloadToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(94, 20);
-            aboutToolStripMenuItem.Text = "О программе";
+            aboutToolStripMenuItem.Text = "About";
             // 
             // panel1
             // 
@@ -106,7 +106,7 @@
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             Name = "Form1";
-            Text = "Form1";
+            Text = "DayZ Player DB Editor";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);
