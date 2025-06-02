@@ -67,7 +67,10 @@ public partial class PlayerEditor : UserControl
             CountPlayerItems();
         else if (sender == searchItemButton)
             SearchItemAcrossPlayers();
+        else if (sender == comparePlayersButton)
+            ComparePlayerInventories();
     }
+
     private void FindNextPlayer()
     {
         if (string.IsNullOrWhiteSpace(searchPlayer.Text))
@@ -484,6 +487,323 @@ public partial class PlayerEditor : UserControl
 
         resultsForm.Controls.Add(textBox);
         resultsForm.Controls.Add(selectPlayerButton);
+        resultsForm.Controls.Add(closeButton);
+        resultsForm.Show();
+    }
+
+    private void ComparePlayerInventories()
+    {
+        if (DB == null || DB.Players.Count < 2)
+        {
+            MessageBox.Show("Need at least two players in the database to compare.", 
+                "Compare Players", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        // Create a player selection form
+        var selectionForm = new Form
+        {
+            Text = "Select Players to Compare",
+            Size = new Size(400, 300),
+            StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            MinimizeBox = false,
+            MaximizeBox = false,
+            ShowInTaskbar = false
+        };
+
+        // First player selection
+        var firstPlayerLabel = new Label
+        {
+            Text = "First Player:",
+            Location = new Point(20, 20),
+            AutoSize = true
+        };
+
+        // ComboBox with UID-based filtering
+        var firstPlayerCombo = new ComboBox
+        {
+            Location = new Point(20, 45),
+            Width = 340,
+            AutoCompleteMode = AutoCompleteMode.SuggestAppend,
+            AutoCompleteSource = AutoCompleteSource.CustomSource
+        };
+
+        // Create an AutoCompleteStringCollection for the UID search
+        var firstPlayerAutoComplete = new AutoCompleteStringCollection();
+
+        // Second player selection
+        var secondPlayerLabel = new Label
+        {
+            Text = "Second Player:",
+            Location = new Point(20, 80),
+            AutoSize = true
+        };
+
+        // ComboBox with UID-based filtering
+        var secondPlayerCombo = new ComboBox
+        {
+            Location = new Point(20, 105),
+            Width = 340,
+            AutoCompleteMode = AutoCompleteMode.SuggestAppend,
+            AutoCompleteSource = AutoCompleteSource.CustomSource
+        };
+
+        // Create an AutoCompleteStringCollection for the UID search
+        var secondPlayerAutoComplete = new AutoCompleteStringCollection();
+
+        // Dictionary to map display strings to player objects for easy lookup
+        var playerDisplayMap = new Dictionary<string, DzChar>();
+        var playerUidMap = new Dictionary<string, string>(); // Maps UID to display name
+
+        // Populate player combo boxes
+        foreach (var player in DB.Players.Where(p => p.Items != null))
+        {
+            // Format: "Name (UID: 123456789)"
+            string displayName = $"{player.CharacterName} (UID: {player.UID})";
+            playerDisplayMap[displayName] = player;
+            playerUidMap[player.UID] = displayName;
+            
+            // Add to dropdown lists
+            firstPlayerCombo.Items.Add(displayName);
+            secondPlayerCombo.Items.Add(displayName);
+            
+            // Add the UID to the autocomplete collections
+            firstPlayerAutoComplete.Add(player.UID);
+            secondPlayerAutoComplete.Add(player.UID);
+        }
+        
+        // Set the autocomplete custom sources
+        firstPlayerCombo.AutoCompleteCustomSource = firstPlayerAutoComplete;
+        secondPlayerCombo.AutoCompleteCustomSource = secondPlayerAutoComplete;
+        
+        // Add TextChanged handler to handle UID-based selection
+        firstPlayerCombo.TextChanged += (s, e) => {
+            string enteredText = firstPlayerCombo.Text.Trim();
+            if (playerUidMap.TryGetValue(enteredText, out string? matchedDisplay))
+            {
+                // If exact UID match, select the item
+                firstPlayerCombo.Text = matchedDisplay;
+                firstPlayerCombo.Select(matchedDisplay.Length, 0); // Move cursor to end
+            }
+        };
+        
+        secondPlayerCombo.TextChanged += (s, e) => {
+            string enteredText = secondPlayerCombo.Text.Trim();
+            if (playerUidMap.TryGetValue(enteredText, out string? matchedDisplay))
+            {
+                // If exact UID match, select the item
+                secondPlayerCombo.Text = matchedDisplay;
+                secondPlayerCombo.Select(matchedDisplay.Length, 0); // Move cursor to end
+            }
+        };
+        
+        if (firstPlayerCombo.Items.Count > 0)
+            firstPlayerCombo.SelectedIndex = 0;
+        if (secondPlayerCombo.Items.Count > 1)
+            secondPlayerCombo.SelectedIndex = 1;
+
+        // Compare button
+        var compareButton = new Button
+        {
+            Text = "Compare",
+            Location = new Point(120, 200),
+            Width = 80,
+            Height = 30
+        };
+
+        var cancelButton = new Button
+        {
+            Text = "Cancel",
+            Location = new Point(210, 200), 
+            Width = 80,
+            Height = 30
+        };
+
+        cancelButton.Click += (s, e) => selectionForm.Close();
+        compareButton.Click += (s, e) =>
+        {
+            if (firstPlayerCombo.SelectedItem == null || secondPlayerCombo.SelectedItem == null)
+            {
+                MessageBox.Show("Please select two players to compare.", 
+                    "Compare Players", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var player1DisplayName = firstPlayerCombo.SelectedItem.ToString();
+            var player2DisplayName = secondPlayerCombo.SelectedItem.ToString();
+            
+            if (player1DisplayName == null || player2DisplayName == null || 
+                !playerDisplayMap.TryGetValue(player1DisplayName, out var player1) || 
+                !playerDisplayMap.TryGetValue(player2DisplayName, out var player2))
+            {
+                MessageBox.Show("Invalid player selection.", 
+                    "Compare Players", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (player1.UID == player2.UID)
+            {
+                MessageBox.Show("Please select two different players.", 
+                    "Compare Players", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            PerformInventoryComparison(player1, player2);
+            selectionForm.Close();
+        };
+
+        // Help text
+        var helpLabel = new Label
+        {
+            Text = "Type a player's UID to search",
+            Location = new Point(20, 150),
+            AutoSize = true,
+            ForeColor = Color.Gray
+        };
+
+        // Add controls to form
+        selectionForm.Controls.Add(firstPlayerLabel);
+        selectionForm.Controls.Add(firstPlayerCombo);
+        selectionForm.Controls.Add(secondPlayerLabel);
+        selectionForm.Controls.Add(secondPlayerCombo);
+        selectionForm.Controls.Add(helpLabel);
+        selectionForm.Controls.Add(compareButton);
+        selectionForm.Controls.Add(cancelButton);
+
+        selectionForm.ShowDialog();
+    }
+
+    private void PerformInventoryComparison(DzChar player1, DzChar player2)
+    {
+        // Dictionaries to store items by their persistent UID
+        var player1Items = new Dictionary<string, DzItem>();
+        var player2Items = new Dictionary<string, DzItem>();
+        var matchingItems = new Dictionary<string, (DzItem Item1, DzItem Item2)>();
+        
+        // Helper method to recursively extract all items with their persistent UIDs
+        void ExtractItems(DzItem item, Dictionary<string, DzItem> itemsDict)
+        {
+            if (!string.IsNullOrEmpty(item.PersistentGuid))
+                itemsDict[item.PersistentGuid] = item;
+                
+            if (item.Childs != null)
+            {
+                foreach (var child in item.Childs)
+                    ExtractItems(child, itemsDict);
+            }
+        }
+        
+        // Build dictionaries for both players
+        if (player1.Items != null)
+        {
+            foreach (var item in player1.Items)
+                ExtractItems(item, player1Items);
+        }
+        
+        if (player2.Items != null)
+        {
+            foreach (var item in player2.Items)
+                ExtractItems(item, player2Items);
+        }
+        
+        // Find matching items (same persistent UID)
+        foreach (var kvp in player1Items)
+        {
+            string persistentUid = kvp.Key;
+            if (player2Items.TryGetValue(persistentUid, out var player2Item))
+            {
+                matchingItems[persistentUid] = (kvp.Value, player2Item);
+            }
+        }
+        
+        // Display results
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Inventory Comparison");
+        sb.AppendLine($"Player 1: {player1.CharacterName} (UID: {player1.UID})");
+        sb.AppendLine($"Player 2: {player2.CharacterName} (UID: {player2.UID})");
+        sb.AppendLine();
+        
+        if (matchingItems.Count == 0)
+        {
+            sb.AppendLine("No matching persistent UIDs found between these players.");
+        }
+        else
+        {
+            sb.AppendLine($"Found {matchingItems.Count} items with matching persistent UIDs:");
+            sb.AppendLine("----------------------------------------------------");
+            
+            foreach (var match in matchingItems)
+            {
+                sb.AppendLine($"Persistent UID: {match.Key}");
+                sb.AppendLine($"Item 1: {match.Value.Item1.Classname} (Slot: {match.Value.Item1.Slot})");
+                sb.AppendLine($"Item 2: {match.Value.Item2.Classname} (Slot: {match.Value.Item2.Slot})");
+                sb.AppendLine();
+            }
+        }
+        
+        // Show results dialog
+        var resultsForm = new Form
+        {
+            Text = "Inventory Comparison Results",
+            Size = new Size(600, 600),
+            StartPosition = FormStartPosition.CenterParent,
+            FormBorderStyle = FormBorderStyle.Sizable,
+            MinimizeBox = false,
+            MaximizeBox = true
+        };
+
+        var textBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            Dock = DockStyle.Fill,
+            ScrollBars = ScrollBars.Both,
+            Text = sb.ToString(),
+            Font = new Font("Consolas", 10)
+        };
+
+        var closeButton = new Button
+        {
+            Text = "Close",
+            Dock = DockStyle.Bottom,
+            Height = 30
+        };
+        closeButton.Click += (s, e) => resultsForm.Close();
+        
+        var exportButton = new Button
+        {
+            Text = "Export Results",
+            Dock = DockStyle.Bottom,
+            Height = 30
+        };
+        
+        exportButton.Click += (s, e) => {
+            var saveDialog = new SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt",
+                Title = "Export Comparison Results",
+                FileName = $"Comparison_{player1.UID}_vs_{player2.UID}.txt"
+            };
+            
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    File.WriteAllText(saveDialog.FileName, sb.ToString());
+                    MessageBox.Show($"Results exported to {saveDialog.FileName}", 
+                        "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error exporting results: {ex.Message}", 
+                        "Export Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        };
+
+        resultsForm.Controls.Add(textBox);
+        resultsForm.Controls.Add(exportButton);
         resultsForm.Controls.Add(closeButton);
         resultsForm.Show();
     }

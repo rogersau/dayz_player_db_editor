@@ -44,6 +44,7 @@
             cleanInventoryButton = new Button();
             deleteDuplicatesButton = new Button();
             exportDuplicatesButton = new Button();
+            comparePlayersButton = new Button();
             label4 = new Label();
             label3 = new Label();
             dupeInventory = new TreeView();
@@ -118,6 +119,7 @@
             groupBox1.Controls.Add(cleanInventoryButton);
             groupBox1.Controls.Add(deleteDuplicatesButton);
             groupBox1.Controls.Add(exportDuplicatesButton);
+            groupBox1.Controls.Add(comparePlayersButton);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(dupeInventory);
@@ -160,7 +162,7 @@
             // 
             // countItemsButton
             // 
-            countItemsButton.Location = new Point(7, 676);
+            countItemsButton.Location = new Point(6, 678);
             countItemsButton.Margin = new Padding(3, 4, 3, 4);
             countItemsButton.Name = "countItemsButton";
             countItemsButton.Size = new Size(560, 31);
@@ -171,10 +173,10 @@
             // 
             // clearDuplicatesListButton
             // 
-            clearDuplicatesListButton.Location = new Point(593, 715);
+            clearDuplicatesListButton.Location = new Point(799, 715);
             clearDuplicatesListButton.Margin = new Padding(3, 4, 3, 4);
             clearDuplicatesListButton.Name = "clearDuplicatesListButton";
-            clearDuplicatesListButton.Size = new Size(560, 31);
+            clearDuplicatesListButton.Size = new Size(352, 31);
             clearDuplicatesListButton.TabIndex = 14;
             clearDuplicatesListButton.Text = "Clear List";
             clearDuplicatesListButton.UseVisualStyleBackColor = true;
@@ -209,7 +211,7 @@
             cleanInventoryButton.Location = new Point(7, 753);
             cleanInventoryButton.Margin = new Padding(3, 4, 3, 4);
             cleanInventoryButton.Name = "cleanInventoryButton";
-            cleanInventoryButton.Size = new Size(560, 31);
+            cleanInventoryButton.Size = new Size(559, 31);
             cleanInventoryButton.TabIndex = 11;
             cleanInventoryButton.Text = "Clear Inventory";
             cleanInventoryButton.UseVisualStyleBackColor = true;
@@ -239,6 +241,16 @@
             exportDuplicatesButton.UseVisualStyleBackColor = true;
             exportDuplicatesButton.Click += Click_Button_Action;
             // 
+            // comparePlayersButton
+            // 
+            comparePlayersButton.Location = new Point(593, 714);
+            comparePlayersButton.Name = "comparePlayersButton";
+            comparePlayersButton.Size = new Size(200, 31);
+            comparePlayersButton.TabIndex = 19;
+            comparePlayersButton.Text = "Compare Players";
+            comparePlayersButton.UseVisualStyleBackColor = true;
+            comparePlayersButton.Click += Click_Button_Action;
+            // 
             // label4
             // 
             label4.Location = new Point(593, 23);
@@ -250,7 +262,7 @@
             // 
             // label3
             // 
-            label3.Location = new Point(7, 23);
+            label3.Location = new Point(6, 24);
             label3.Name = "label3";
             label3.Size = new Size(560, 24);
             label3.TabIndex = 7;
@@ -312,7 +324,7 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(tableLayoutPanel1);
-            groupBox2.Location = new Point(433, 39);
+            groupBox2.Location = new Point(434, 49);
             groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 4, 3, 4);
@@ -494,5 +506,6 @@
         private TextBox searchItemTextBox;
         private Button searchItemButton;
         private Label label9;
+        private Button comparePlayersButton;
     }
 }
