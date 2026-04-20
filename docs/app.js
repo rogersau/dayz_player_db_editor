@@ -440,9 +440,7 @@
             return state.sqlModule;
         }
 
-        state.sqlModule = await window.initSqlJs({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/sql.js@1.13.0/dist/${file}`
-        });
+        state.sqlModule = await window.initSqlJs();
 
         return state.sqlModule;
     }

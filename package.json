@@ -1,0 +1,26 @@
+{
+  "name": "dayz_player_db_editor",
+  "version": "1.0.0",
+  "description": "A tool for basic operations with the DayZ game player database. Due to the complexity of parsing individual classes, not all planned functionality has been implemented yet.",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "check:web": "node --check docs/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogersau/dayz_player_db_editor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rogersau/dayz_player_db_editor/issues"
+  },
+  "homepage": "https://github.com/rogersau/dayz_player_db_editor#readme",
+  "dependencies": {
+    "sql.js": "1.13.0"
+  }
+}

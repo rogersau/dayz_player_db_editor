@@ -19,7 +19,7 @@ This repository now also includes a static browser viewer in `/docs`.
 
 ### Notes
 * The web viewer is read-only
-* SQLite parsing is handled in the browser with `sql.js`
+* SQLite parsing is handled in the browser with a vendored `sql.js` browser build
 * The original WinForms editor is still present in the repository
 
 ## Implemented Features
