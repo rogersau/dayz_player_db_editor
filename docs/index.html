@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DayZ Player DB Viewer</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">Client-side viewer</p>
+                <h1>DayZ Player DB Viewer</h1>
+                <p class="subtitle">Open a <code>.db</code> file in your browser and inspect player records without uploading it to a server.</p>
+            </div>
+
+            <section class="upload-card">
+                <label class="file-picker" for="database-file">
+                    <span>Choose player database</span>
+                    <input id="database-file" type="file" accept=".db,.sqlite,.sqlite3,application/vnd.sqlite3">
+                </label>
+                <p id="status-message" class="status-message">Select a player database to begin.</p>
+            </section>
+        </header>
+
+        <section class="toolbar">
+            <label class="field">
+                <span>Find player by UID / Steam64 / name</span>
+                <input id="player-search" type="search" placeholder="Search players" disabled>
+            </label>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Records</span>
+                    <strong id="player-count">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Alive</span>
+                    <strong id="alive-count">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Dead</span>
+                    <strong id="dead-count">0</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="layout">
+            <aside class="panel">
+                <div class="panel-header">
+                    <h2>Players</h2>
+                </div>
+                <div id="players-empty" class="empty-state">Upload a database to load player records.</div>
+                <div id="players-list" class="players-list" aria-live="polite"></div>
+            </aside>
+
+            <section class="panel details-panel">
+                <div class="panel-header">
+                    <h2>Player details</h2>
+                </div>
+                <div id="details-empty" class="empty-state">Choose a player to view the parsed inventory tree.</div>
+                <div id="player-details" class="player-details hidden">
+                    <dl class="details-grid">
+                        <div>
+                            <dt>DB ID</dt>
+                            <dd id="detail-id">—</dd>
+                        </div>
+                        <div>
+                            <dt>UID</dt>
+                            <dd id="detail-uid">—</dd>
+                        </div>
+                        <div>
+                            <dt>Name</dt>
+                            <dd id="detail-name">—</dd>
+                        </div>
+                        <div>
+                            <dt>Status</dt>
+                            <dd id="detail-status">—</dd>
+                        </div>
+                        <div>
+                            <dt>Top-level items</dt>
+                            <dd id="detail-item-count">0</dd>
+                        </div>
+                    </dl>
+
+                    <section class="inventory-section">
+                        <div class="inventory-header">
+                            <h3>Inventory</h3>
+                            <span id="inventory-summary" class="inventory-summary"></span>
+                        </div>
+                        <div id="inventory-tree" class="inventory-tree"></div>
+                    </section>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sql.js@1.13.0/dist/sql-wasm.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>

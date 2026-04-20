@@ -1,0 +1,353 @@
+:root {
+    color-scheme: dark;
+    --bg: #0f172a;
+    --panel: #111827;
+    --panel-border: #243045;
+    --panel-alt: #162033;
+    --text: #e5eefc;
+    --muted: #9fb0ca;
+    --accent: #60a5fa;
+    --accent-soft: rgba(96, 165, 250, 0.16);
+    --danger: #f87171;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+    color: var(--text);
+}
+
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.app-shell {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+}
+
+.hero,
+.toolbar,
+.layout {
+    display: grid;
+    gap: 24px;
+}
+
+.hero {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    align-items: start;
+    margin-bottom: 24px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+}
+
+.subtitle {
+    max-width: 70ch;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.upload-card,
+.panel,
+.toolbar {
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid var(--panel-border);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+}
+
+.upload-card {
+    padding: 20px;
+}
+
+.file-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.file-picker input {
+    width: 100%;
+    border: 1px dashed var(--panel-border);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--panel-alt);
+    color: var(--text);
+}
+
+.status-message {
+    margin: 14px 0 0;
+    color: var(--muted);
+    min-height: 24px;
+}
+
+.status-message.error {
+    color: var(--danger);
+}
+
+.toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field span,
+.stat-label,
+dt {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.field input {
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: var(--panel-alt);
+    color: var(--text);
+}
+
+.stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    min-width: 110px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--panel-alt);
+    border: 1px solid var(--panel-border);
+}
+
+.stat strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 1.35rem;
+}
+
+.layout {
+    grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+}
+
+.panel {
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--panel-border);
+}
+
+.empty-state {
+    margin: auto;
+    padding: 24px;
+    max-width: 48ch;
+    text-align: center;
+    color: var(--muted);
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    overflow: auto;
+}
+
+.player-card {
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    background: var(--panel-alt);
+    color: var(--text);
+    padding: 14px 16px;
+    cursor: pointer;
+}
+
+.player-card:hover,
+.player-card:focus-visible,
+.player-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+    outline: none;
+}
+
+.player-card-header,
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+}
+
+.player-meta,
+.inventory-summary {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.player-name {
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 4px 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.status-pill.dead {
+    background: rgba(248, 113, 113, 0.16);
+    color: var(--danger);
+}
+
+.details-panel {
+    padding-bottom: 20px;
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 0;
+}
+
+.details-grid div {
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--panel-alt);
+    border: 1px solid var(--panel-border);
+}
+
+dd {
+    margin: 8px 0 0;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.inventory-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.inventory-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tree-node {
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    background: var(--panel-alt);
+    padding: 12px 14px;
+}
+
+.tree-node summary {
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+}
+
+.tree-node summary::-webkit-details-marker {
+    display: none;
+}
+
+.tree-node summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 1.25rem;
+    color: var(--accent);
+}
+
+.tree-node[open] > summary::before {
+    content: "▾";
+}
+
+.tree-children {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 12px;
+    border-left: 1px solid var(--panel-border);
+}
+
+.item-meta {
+    margin-top: 10px;
+    color: var(--muted);
+    display: grid;
+    gap: 6px;
+}
+
+.empty-list {
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--panel-alt);
+    border: 1px solid var(--panel-border);
+    color: var(--muted);
+}
+
+@media (max-width: 1024px) {
+    .hero,
+    .toolbar,
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        min-height: 420px;
+    }
+}
