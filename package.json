@@ -1,0 +1,34 @@
+{
+  "name": "dayz_player_db_editor",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A tool for basic operations with the DayZ game player database.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --project tsconfig.app.json && vite build",
+    "check:web": "tsc --project tsconfig.app.json --noEmit",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogersau/dayz_player_db_editor.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rogersau/dayz_player_db_editor/issues"
+  },
+  "homepage": "https://github.com/rogersau/dayz_player_db_editor#readme",
+  "dependencies": {
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "sql.js": "1.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "typescript": "6.0.3",
+    "vite": "8.0.8"
+  }
+}
