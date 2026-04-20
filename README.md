@@ -4,7 +4,7 @@ A tool for basic operations with the DayZ game player database. Due to the compl
 
 ## Client-side web viewer
 
-This repository now also includes a static browser viewer in `/docs`.
+This repository now also includes a static browser viewer in `/docs`, built from a React + TypeScript source app.
 
 ### What it does
 * Opens a DayZ player database directly in the browser
@@ -17,9 +17,14 @@ This repository now also includes a static browser viewer in `/docs`.
 * Choose a DayZ player database file from your computer
 * Select a player record to inspect the parsed inventory tree
 
+### Web app development
+* Install dependencies with `npm install`
+* Run `npm run check:web` for TypeScript validation
+* Run `npm run build` to generate the static site into `/docs`
+
 ### Notes
 * The web viewer is read-only
-* SQLite parsing is handled in the browser with a vendored `sql.js` browser build
+* SQLite parsing is handled in the browser with a bundled React + TypeScript app and a vendored `sql.js` runtime
 * The original WinForms editor is still present in the repository
 
 ## Implemented Features
