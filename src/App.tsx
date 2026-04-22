@@ -286,9 +286,6 @@ function App() {
                     Client-side viewer
                   </div>
                   <CardTitle className="text-xl md:text-2xl">DayZ Player DB Viewer</CardTitle>
-                  <CardDescription className="max-w-2xl text-xs leading-5 md:text-sm">
-                    Compact inventory browsing with player search, item search, and per-player summaries — all in the browser.
-                  </CardDescription>
                 </div>
                 <Badge className="shrink-0" variant={statusTone}>
                   {statusLabel}
@@ -305,7 +302,6 @@ function App() {
           <Card className="border-border/80 bg-card/90 backdrop-blur">
             <CardHeader className="pb-3">
               <CardTitle>Database</CardTitle>
-              <CardDescription>Pick a DayZ player database file to inspect locally.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <input
@@ -334,7 +330,6 @@ function App() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <CardTitle>Players</CardTitle>
-                  <CardDescription>Steam64 when known from your searches, otherwise the stored DayZ UID.</CardDescription>
                 </div>
                 <Badge variant="outline">{viewState.filteredPlayers.length}</Badge>
               </div>
@@ -406,7 +401,6 @@ function App() {
             <Card className="border-border/80 bg-card/90 backdrop-blur">
               <CardHeader className="gap-2 pb-3">
                 <CardTitle>Item search</CardTitle>
-                <CardDescription>Search alive players by classname and jump straight to the matching inventory.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="relative">
