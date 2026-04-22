@@ -3,8 +3,24 @@ export interface PlayerRecord {
   uid: string;
   alive: boolean;
   data: Uint8Array;
+  hasData: boolean;
   characterName: string | null;
+  blobVersion: number | null;
+  position: PlayerPosition | null;
+  stats: PlayerStatEntry[];
   items: InventoryItem[];
+}
+
+export interface PlayerPosition {
+  x: number;
+  y: number;
+  z: number;
+  facingDegrees: number;
+}
+
+export interface PlayerStatEntry {
+  key: string;
+  value: number;
 }
 
 export interface InventoryItem {
@@ -13,6 +29,19 @@ export interface InventoryItem {
   parent: string;
   persistentGuid: string;
   children: InventoryItem[];
+}
+
+export interface ItemClassSummary {
+  classname: string;
+  count: number;
+}
+
+export interface PlayerItemSearchResult {
+  uid: string;
+  id: number;
+  alive: boolean;
+  characterName: string | null;
+  count: number;
 }
 
 export interface SqlJsDatabase {
